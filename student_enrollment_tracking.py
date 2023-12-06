@@ -60,41 +60,60 @@ class Course:
     def enroll_student(self, student):
         if student not in self.enrolled_students:
             self.enrolled_students.append(student)
-            print(f"Estudante '{student.name}' inscrito no curso '{self.title}' com sucesso.")
+            print(f"Estudante '{student.name}' matriculado no curso '{self.title}' com sucesso.")
         else:
-            print(f"Estudante '{student.name}' já está inscrito no curso '{self.title}'.")
-    def get_enrolled_students(self):
-        if not self.enrolled_students:
-            print(f"Não há estudantes inscritos no curso '{self.title}'.")
-        else:
-            print(f" Estudantes inscritos no curso '{self.title}':")
-            for student in self.enrolled_students:
-                print(f"  - {student.name}")
+            print(f"Estudante '{student.name}' já está matriculado no curso '{self.title}'.")
 
 class Module:
     def __init__(self, title, content):
         self.title = title
         self.content = content
         self.assignments = []
+        self.student_progress = {}
 
     def add_assignment(self, assignment):
         self.assignments.append(assignment)
 
+    def update_student_progress(self, student):
+        # Atualiza o progresso do estudante no módulo
+        video_progress = self.video_progress.get(student, 0)
+        activity_progress = self.calculate_student_progress(student)
+
+        overall_progress = (video_progress + activity_progress) / 2  
+
+        self.student_progress[student] = overall_progress
+
+    def calculate_student_progress(self, student):
+        
+        total_activities = len([assignment for assignment in self.assignments if assignment.activity])
+        completed_activities = len([submission for assignment in self.assignments for submission in assignment.submissions if submission.student == student])
+
+        return completed_activities / total_activities if total_activities > 0 else 0
+
 class Assignment:
-    def __init__(self, title, description):
+    def __init__(self, title, description, activity):
         self.title = title
         self.description = description
+        self.activity = activity # saber se a submissão é uma atividade ou não
+        self.module = None # Referência ao módulo ao qual a tarefa está associada
         self.submissions = []
 
     def submit(self, student, submission_text):
         submission = Submission(student, submission_text)
         self.submissions.append(submission)
 
+        if self.module:
+            self.module.update_student_progress(student)
+
+    def calculate_student_progress(self, student):
+        total_activities = len([assignment for assignment in self.module.assignments if assignment.activity])
+        completed_activities = len([submission for submission in self.submissions if submission.student == student])
+        return completed_activities / total_activities if total_activities > 0 else 0
+
 class Submission:
     def __init__(self, student, text):
         self.student = student
         self.text = text
-
 
 class UserInterface:
     def __init__(self):
@@ -123,6 +142,7 @@ class UserInterface:
             print("8.  Cadastrar Estudantes")
             print("9.  Matricular Estudantes")
             print("10. Mostrar Estudantes Inscritos em um Curso")
+            print("11. Ver Progresso dos Estudantes em um Curso")
             print("0. Sair")
 
             choice = input("Escolha uma opção (0-10): ")
@@ -147,6 +167,8 @@ class UserInterface:
                 self.enroll_students_in_course()
             elif choice == '10':
                 self.display_enrolled_students()
+            elif choice == '11':
+                self.display_student_progress_in_course()
             elif choice == '0':
                 break
             else:
@@ -215,7 +237,6 @@ class UserInterface:
     def remove_module_content(self):
         remove_module_title = input("Digite o título do módulo que deseja remover o conteúdo: ")
 
-        # Verificando se o módulo existe
         for course in self.instructor.courses:
             for module in course.modules:
                 if remove_module_title == module.title:
@@ -328,20 +349,17 @@ class UserInterface:
             student_name = input("Digite o nome do estudante a ser matriculado (ou pressione Enter para encerrar): ")
             if not student_name:
                 break
-
-            found_students = [student for student in self.students if student.name == student_name]
-            if found_students:
-                selected_student = found_students[0]
-                selected_student.enroll_in_course(selected_course)
-            else:
-                print(f"Estudante '{student_name}' não encontrado. Crie o estudante primeiro.")
+            student_id = input("Digite o ID do estudante: ")
+            student_email = input("Digite o email do estudante: ")
+            new_student = student(name=student_name, email=student_email, student_id=student_id)
+            selected_course.enroll_student(new_student)
 
     def display_enrolled_students(self):
         if not self.instructor.courses:
             print("Não há cursos disponíveis para mostrar os estudantes inscritos.")
             return
-        
-        print(f"Cursos disponíveis:")
+
+        print("Cursos disponíveis:")
         for i, course in enumerate(self.instructor.courses, 1):
             print(f"{i}. {course.title}")
 
@@ -352,10 +370,34 @@ class UserInterface:
                 break
             except (ValueError, IndexError):
                 print("Escolha inválida. Tente novamente.")
-        
+
         selected_course.get_enrolled_students()
 
-ui = UserInterface()
 
+    def display_student_progress_in_course(self):
+        if not self.instructor.courses:
+            print("Não há cursos disponíveis para mostrar o progresso do estudante.")
+            return
+
+        print("Cursos disponíveis:")
+        for i, course in enumerate(self.instructor.courses, 1):
+            print(f"{i}. {course.title}")
+
+        while True:
+            try:
+                course_index = int(input("Escolha o número do curso para mostrar o progresso do estudante: ")) - 1
+                selected_course = self.instructor.courses[course_index]
+                break
+            except (ValueError, IndexError):
+                print("Escolha inválida. Tente novamente.")
+
+        for module in selected_course.modules:
+            print(f"\nMódulo: {module.title}")
+
+            for student in module.student_progress:
+                progress = module.student_progress[student]
+                print(f"  - Estudante: {student.name}, Progresso: {progress * 100:.2f}%")
+
+ui = UserInterface()
 
 ui.start()
