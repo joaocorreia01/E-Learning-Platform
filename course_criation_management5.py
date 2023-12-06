@@ -23,12 +23,30 @@ class Instructor:
         # falta implentar essa funcionalidade
         pass
 
+class student:
+    def __init__(self, name, email, student_id):
+        self.name = name
+        self.email = email
+        self.student_id = student_id
+        self.enrolled_courses = []
+
+    def enroll_in_course(self, course):
+        if course not in self.enrolled_courses and self in ui.students:
+            self.enrolled_courses.append(course)
+            course.enroll_student(self)
+            print(f"Inscrição de '{self.name}' no curso '{course.title}' realizada com sucesso.")
+        elif self not in ui.students:
+            print(f"Estudante '{self.name}' não encontrado. Crie o estudante primeiro.")
+        else:
+            print(f"{self.name} já está inscrito no curso '{course.title}'.")
+
 class Course:
     def __init__(self, title, description, instructor):
         self.title = title
         self.description = description
         self.instructor = instructor
         self.modules = []
+        self.enrolled_students = []
 
     def update(self, new_title=None, new_description=None):
         if new_title:
@@ -39,9 +57,19 @@ class Course:
     def add_module(self, module):
         self.modules.append(module)
 
-    def manage_enrollments(self):
-        # Ainda falta sedenvolver essa funcionalidade de gerenciamento de inscrições
-        pass
+    def enroll_student(self, student):
+        if student not in self.enrolled_students:
+            self.enrolled_students.append(student)
+            print(f"Estudante '{student.name}' inscrito no curso '{self.title}' com sucesso.")
+        else:
+            print(f"Estudante '{student.name}' já está inscrito no curso '{self.title}'.")
+    def get_enrolled_students(self):
+        if not self.enrolled_students:
+            print(f"Não há estudantes inscritos no curso '{self.title}'.")
+        else:
+            print(f" Estudantes inscritos no curso '{self.title}':")
+            for student in self.enrolled_students:
+                print(f"  - {student.name}")
 
 class Module:
     def __init__(self, title, content):
@@ -70,6 +98,7 @@ class Submission:
 class UserInterface:
     def __init__(self):
         self.instructor = None
+        self.students = []
 
     def start(self):
         print("Bem-vindo à Plataforma de Cursos!")
@@ -83,16 +112,19 @@ class UserInterface:
         while True:
 
             print("\nOpções:")
-            print("1. Criar Curso")
-            print("2. Atualizar Informações do Curso")
-            print("3. Atualizar Conteúdo do Módulo")
-            print("4. Remover Conteúdo do Módulo")
-            print("5. Adicionar Módulo")
-            print("6. Remover Módulo")
-            print("7. Mostrar Cursos e Módulos Criados")
+            print("1.  Criar Curso")
+            print("2.  Atualizar Informações do Curso")
+            print("3.  Atualizar Conteúdo do Módulo")
+            print("4.  Remover Conteúdo do Módulo")
+            print("5.  Adicionar Módulo")
+            print("6.  Remover Módulo")
+            print("7.  Mostrar Cursos e Módulos Criados")
+            print("8.  Cadastrar Estudantes")
+            print("9.  Matricular Estudantes")
+            print("10. Mostrar Estudantes Inscritos em um Curso")
             print("0. Sair")
 
-            choice = input("Escolha uma opção (0-7): ")
+            choice = input("Escolha uma opção (0-10): ")
 
             if choice == '1':
                 self.create_course()
@@ -108,6 +140,12 @@ class UserInterface:
                 self.remove_module()
             elif choice == '7':
                 self.display_created_courses_and_modules()
+            elif choice == '8':
+                self.register_student()
+            elif choice == '9':
+                self.enroll_students_in_course()
+            elif choice == '10':
+                self.display_enrolled_students()
             elif choice == '0':
                 break
             else:
@@ -129,6 +167,14 @@ class UserInterface:
             new_course.add_module(module)
 
         self.display_course_details(new_course)
+
+    def register_student(self):
+        student_name = input("Digite o nome do estudante: ")
+        student_id = input("Digite o ID do estudante: ")
+        student_email = input("Digite o email do estudante: ")
+        new_student = student(name=student_name, email=student_email, student_id=student_id)
+        print(f"Estudante '{new_student.name}' criado com sucesso.")
+        self.students.append(new_student)
 
     def update_course_information(self):
         update_course_title = input("Digite o título do curso que deseja atualizar: ")
@@ -259,6 +305,39 @@ class UserInterface:
         print("Cursos:")
         for course in self.instructor.courses:
             print(f"  - {course.title}")
+
+# entender melhor a funcao abaixo
+
+
+def enroll_students_in_course(self):
+        if not self.instructor.courses:
+            print("Não há cursos disponíveis para matricular estudantes.")
+            return
+
+        print("Cursos disponíveis:")
+        for i, course in enumerate(self.instructor.courses, 1):
+            print(f"{i}. {course.title}")
+
+        while True:
+            try:
+                course_index = int(input("Escolha o número do curso para matricular estudantes: ")) - 1
+                selected_course = self.instructor.courses[course_index]
+                break
+            except (ValueError, IndexError):
+                print("Escolha inválida. Tente novamente.")
+
+        while True:
+            student_name = input("Digite o nome do estudante a ser matriculado (ou pressione Enter para encerrar): ")
+            if not student_name:
+                break
+
+            found_students = [student for student in self.students if student.name == student_name]
+            if found_students:
+                selected_student = found_students[0]
+                selected_student.enroll_in_course(selected_course)
+            else:
+                print(f"Estudante '{student_name}' não encontrado. Crie o estudante primeiro.")
+
 
 
 ui = UserInterface()
