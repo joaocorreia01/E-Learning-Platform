@@ -12,7 +12,9 @@ Repositório usado na disciplina de Projeto de Software
 
 - **4-Video Streaming:** Instrutores adicionam os videos nos módulos de cada curso e os estudantes podem visualizar;
 
-- **5-Content Access Control:** Gerencio diferentes tipos de permissão, um para conta de instrutor e outro para conta de estudante;
+- **8-Content Access Control:** Gerencio diferentes tipos de permissão, um para conta de instrutor e outro para conta de estudante;
+
+- obs.: A funcionalidade 9: Mobile Compatibility. Professor pediu para não considerar nesse momento.
 
 
 ## Como Usar
