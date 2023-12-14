@@ -95,7 +95,6 @@ class Submission:
         self.student = student
         self.text = text
 
-
 class UserInterface:
     def __init__(self):
         self.instructor = None
@@ -356,6 +355,5 @@ class UserInterface:
         selected_course.get_enrolled_students()
 
 ui = UserInterface()
-
 
 ui.start()

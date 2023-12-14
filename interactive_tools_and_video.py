@@ -1,3 +1,8 @@
+
+#falta eu implentar as opcoes de menu para que o estudante tenha acesso ao conteudo do curso (videos, quizzes e assignments)
+
+#tambem falta implementar a funcionalidade de monitorar o progresso do estudante no curso
+
 class Instructor:
     def __init__(self, name, expertise):
         self.name = name
@@ -75,47 +80,42 @@ class Module:
     def __init__(self, title, content):
         self.title = title
         self.content = content
+        self.videos = []
+        self.quizzes = []
         self.assignments = []
-        self.student_progress = {}
 
-    def add_assignment(self, assignment):
+    def add_video(self, video_title, video_url, video_format):
+        video = Video(video_title, video_url, video_format)
+        self.videos.append(video)
+    
+    def add_quiz(self, quiz_title, quiz_questions):
+        quiz = Quiz(quiz_title, quiz_questions)
+        self.quizzes.append(quiz)
+
+    def add_assignment(self, assignment_title, assignment_description):
+        assignment = Assignment(assignment_title, assignment_description)
         self.assignments.append(assignment)
 
-    def update_student_progress(self, student):
-        # Atualiza o progresso do estudante no módulo
-        video_progress = self.video_progress.get(student, 0)
-        activity_progress = self.calculate_student_progress(student)
+class Video:
+    def __init__(self, title, url, format):
+        self.title = title
+        self.url = url
+        self.format =  format
 
-        overall_progress = (video_progress + activity_progress) / 2  
-
-        self.student_progress[student] = overall_progress
-
-    def calculate_student_progress(self, student):
-        
-        total_activities = len([assignment for assignment in self.assignments if assignment.activity])
-        completed_activities = len([submission for assignment in self.assignments for submission in assignment.submissions if submission.student == student])
-
-        return completed_activities / total_activities if total_activities > 0 else 0
+class Quiz:
+    def __init__(self, title, questions):
+        self.title = title
+        self.questions = questions
 
 class Assignment:
-    def __init__(self, title, description, activity):
+    def __init__(self, title, description):
         self.title = title
         self.description = description
-        self.activity = activity # saber se a submissão é uma atividade ou não
-        self.module = None # Referência ao módulo ao qual a tarefa está associada
         self.submissions = []
 
     def submit(self, student, submission_text):
         submission = Submission(student, submission_text)
         self.submissions.append(submission)
-
-        if self.module:
-            self.module.update_student_progress(student)
-
-    def calculate_student_progress(self, student):
-        total_activities = len([assignment for assignment in self.module.assignments if assignment.activity])
-        completed_activities = len([submission for submission in self.submissions if submission.student == student])
-        return completed_activities / total_activities if total_activities > 0 else 0
 
 class Submission:
     def __init__(self, student, text):
@@ -149,7 +149,6 @@ class UserInterface:
             print("8.  Cadastrar Estudantes")
             print("9.  Matricular Estudantes")
             print("10. Mostrar Estudantes Inscritos em um Curso")
-            print("11. Ver Progresso dos Estudantes em um Curso")
             print("0. Sair")
 
             choice = input("Escolha uma opção (0-10): ")
@@ -174,8 +173,6 @@ class UserInterface:
                 self.enroll_students_in_course()
             elif choice == '10':
                 self.display_enrolled_students()
-            elif choice == '11':
-                self.display_student_progress_in_course()
             elif choice == '0':
                 break
             else:
@@ -244,6 +241,7 @@ class UserInterface:
     def remove_module_content(self):
         remove_module_title = input("Digite o título do módulo que deseja remover o conteúdo: ")
 
+        # Verificando se o módulo existe
         for course in self.instructor.courses:
             for module in course.modules:
                 if remove_module_title == module.title:
@@ -277,6 +275,34 @@ class UserInterface:
         module_title = input("Digite o título do novo módulo: ")
         module_content = input("Digite o conteúdo do novo módulo: ")
         new_module = Module(title=module_title, content=module_content)
+
+        #Adicionando videos aos módulos
+
+        while True:
+            video_title = input("Digite o título do vídeo (ou pressione Enter para encerrar): ")
+            if not video_title:
+                break
+            video_url = input("Digite a URL do vídeo: ")
+            video_format = input("Digite o formato do vídeo: ")
+            new_module.add_video(video_title, video_url, video_format)
+        
+        #Adicionando questionários aos módulos
+
+        while True:
+            quiz_title = input("Digite o título do quiz (ou pressione Enter para encerrar): ")
+            if not quiz_title:
+                break
+            quiz_questions = input("Digite as questões do quiz: ")
+            new_module.add_quiz(quiz_title, quiz_questions)
+
+        #Adicionando tarefas aos modulos
+
+        while True:
+            assignment_title = input("Digite o título da tarefa (ou pressione Enter para encerrar): ")
+            if not assignment_title:
+                break
+            assignment_description = input("Digite a descrição da tarefa (ou pressione Enter para encerrar): ")
+            new_module.add_assignment(assignment_title, assignment_description)
 
         selected_course.add_module(new_module)
         print(f"Novo módulo '{new_module.title}' adicionado ao curso '{selected_course.title}' com sucesso.")
@@ -356,17 +382,20 @@ class UserInterface:
             student_name = input("Digite o nome do estudante a ser matriculado (ou pressione Enter para encerrar): ")
             if not student_name:
                 break
-            student_id = input("Digite o ID do estudante: ")
-            student_email = input("Digite o email do estudante: ")
-            new_student = student(name=student_name, email=student_email, student_id=student_id)
-            selected_course.enroll_student(new_student)
+
+            found_students = [student for student in self.students if student.name == student_name]
+            if found_students:
+                selected_student = found_students[0]
+                selected_student.enroll_in_course(selected_course)
+            else:
+                print(f"Estudante '{student_name}' não encontrado. Crie o estudante primeiro.")
 
     def display_enrolled_students(self):
         if not self.instructor.courses:
             print("Não há cursos disponíveis para mostrar os estudantes inscritos.")
             return
-
-        print("Cursos disponíveis:")
+        
+        print(f"Cursos disponíveis:")
         for i, course in enumerate(self.instructor.courses, 1):
             print(f"{i}. {course.title}")
 
@@ -377,33 +406,8 @@ class UserInterface:
                 break
             except (ValueError, IndexError):
                 print("Escolha inválida. Tente novamente.")
-
+        
         selected_course.get_enrolled_students()
-
-
-    def display_student_progress_in_course(self):
-        if not self.instructor.courses:
-            print("Não há cursos disponíveis para mostrar o progresso do estudante.")
-            return
-
-        print("Cursos disponíveis:")
-        for i, course in enumerate(self.instructor.courses, 1):
-            print(f"{i}. {course.title}")
-
-        while True:
-            try:
-                course_index = int(input("Escolha o número do curso para mostrar o progresso do estudante: ")) - 1
-                selected_course = self.instructor.courses[course_index]
-                break
-            except (ValueError, IndexError):
-                print("Escolha inválida. Tente novamente.")
-
-        for module in selected_course.modules:
-            print(f"\nMódulo: {module.title}")
-
-            for student in module.student_progress:
-                progress = module.student_progress[student]
-                print(f"  - Estudante: {student.name}, Progresso: {progress * 100:.2f}%")
 
 ui = UserInterface()
 
