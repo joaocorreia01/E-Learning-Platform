@@ -27,6 +27,11 @@ Repositório usado na disciplina de Projeto de Software
 4. E dentro do Vscode aperte no Icone superior direito:
     ```bash
    Run Python File
-   
-   
-    
+
+5. Inicialmente aparecerá um menu, como esse:
+   ```
+   Menu Principal:
+    1. Cadastrar Usuário
+    2. Login
+    0. Sair
+    Escolha uma opção:
