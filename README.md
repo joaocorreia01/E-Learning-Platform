@@ -13,3 +13,20 @@ Repositório usado na disciplina de Projeto de Software
 - **4-Video Streaming:** Instrutores adicionam os videos nos módulos de cada curso e os estudantes podem visualizar;
 
 - **5-Content Access Control:** Gerencio diferentes tipos de permissão, um para conta de instrutor e outro para conta de estudante;
+
+
+## Como Usar
+
+1. Certifique-se de ter o Python instalado em seu sistema.
+
+2. Baixe o arquivo:
+   	 ```bash
+   proj_test_final_6.py
+3. De preferência abra o arquivo no Vscode
+
+4. E dentro do Vscode aperte no Icone superior direito:
+    ```bash
+   Run Python File
+   
+   
+    
