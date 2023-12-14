@@ -24,7 +24,7 @@ Repositório usado na disciplina de Projeto de Software
    proj_test_final_6.py
 3. De preferência abra o arquivo no Vscode
 
-4. E dentro do Vscode aperte no Icone superior direito:
+4. E dentro do Vscode aperte no Icone superior direito (▶):
     ```bash
    Run Python File
 
