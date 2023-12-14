@@ -10,7 +10,6 @@ Repositório usado na disciplina de Projeto de Software
 
 - **3-Interactive Learning Tools:** Intrutores podem anexar quiz, tarefas e videos(conteudo interativo);
 
-- **4-Video Streaming:** Instrutores adicionam os videos nos módulos de cada curso e os estudantes podem visualizar
+- **4-Video Streaming:** Instrutores adicionam os videos nos módulos de cada curso e os estudantes podem visualizar;
 
-- **5-Content Access Control:** Gerencio diferente tipos de permissão, um para conta de instrutor e outro para conta de estudante
-
+- **5-Content Access Control:** Gerencio diferentes tipos de permissão, um para conta de instrutor e outro para conta de estudante;
