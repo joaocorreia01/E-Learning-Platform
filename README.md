@@ -16,6 +16,8 @@ Repositório usado na disciplina de Projeto de Software
 
 - obs.: A funcionalidade 9: Mobile Compatibility. Professor pediu para não considerar nesse momento.
 
+-obs. 2: O projeto já está no padrão OO
+
 
 ## Como Usar
 
@@ -37,3 +39,10 @@ Repositório usado na disciplina de Projeto de Software
     2. Login
     0. Sair
     Escolha uma opção:
+   
+6. Agora, basta cadastrar um usuario como instrutor e outro como estudante
+  e logo após logar para testar as funcionalidades.
+
+   
+
+
