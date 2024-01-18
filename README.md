@@ -16,7 +16,7 @@ Repositório usado na disciplina de Projeto de Software
 
 - obs.: A funcionalidade 9: Mobile Compatibility. Professor pediu para não considerar nesse momento.
 
--obs. 2: O projeto já está no padrão OO
+- obs. 2: O projeto já está no padrão OO
 
 
 ## Como Usar
