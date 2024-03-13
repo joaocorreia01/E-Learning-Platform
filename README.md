@@ -43,6 +43,10 @@ Repositório usado na disciplina de Projeto de Software
 6. Agora, basta cadastrar um usuario como instrutor e outro como estudante
   e logo após logar para testar as funcionalidades.
 
+7. Foi implementado no código o padrao de projeto no arquivo abaixo:
+   ```
+   proj_qual_test_final_7.py
+
    
 
 
