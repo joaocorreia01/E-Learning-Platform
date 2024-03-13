@@ -46,7 +46,3 @@ Repositório usado na disciplina de Projeto de Software
 7. Foi implementado no código o padrao de projeto no arquivo abaixo:
    ```
    proj_qual_test_final_7.py
-
-   
-
-
