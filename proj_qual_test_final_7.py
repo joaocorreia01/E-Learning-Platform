@@ -2,11 +2,6 @@ import json
 import getpass
 from urllib.parse import urlparse
 
-
-#como eu posso implemenetar o padrao singleton na minha classe plataformaElearning?
-#me ajude a desenvolver o codigo para a classe plataformaElearning
-
-
 class Usuario:
     def __init__(self, nome,senha,video=None, quizzes=None,tarefas=None):
         self.nome = nome
